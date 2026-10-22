@@ -420,10 +420,8 @@ test.bat
 
 ---
 
-## 20. Technical Skills & Resume Keywords
-`OCR`, `Tesseract`, `OpenCV`, `Computer Vision`, `Document AI`, `Information Extraction`, `Regex`, `Python`, `Streamlit`, `SQLite`, `Pydantic`, `FinTech Automation`, `ETL Pipelines`, `Unit Testing (pytest)`.
 
 ---
 
-## 21. License & Attribution
+## 20. License & Attribution
 This project is open-source under the [MIT License](LICENSE). Developed as part of the **90 Days – 90 Projects Challenge** by **raguramrrp**.
