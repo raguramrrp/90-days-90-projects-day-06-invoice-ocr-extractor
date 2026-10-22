@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "automated-invoice-ocr-extractor"
+version = "1.0.0"
+description = "Automated Invoice Data Extraction & Structuring System using Computer Vision, OCR, and Rule-based NLP"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "raguramrrp" }
+]
+keywords = [
+    "ocr",
+    "computer-vision",
+    "invoice-processing",
+    "tesseract",
+    "document-ai",
+    "streamlit",
+    "information-extraction",
+    "automation"
+]
+dependencies = [
+    "streamlit>=1.35.0",
+    "pytesseract>=0.3.10",
+    "opencv-python>=4.9.0.80",
+    "Pillow>=10.2.0",
+    "pypdf>=4.2.0",
+    "pdfplumber>=0.11.0",
+    "pandas>=2.2.0",
+    "pydantic>=2.7.0",
+    "python-dateutil>=2.9.0",
+    "reportlab>=4.2.0",
+    "python-dotenv>=1.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2.0",
+    "pytest-cov>=5.0.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
