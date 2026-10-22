@@ -46,8 +46,29 @@ $$\text{Discrepancy} = \text{Extracted Total} - \text{Calculated Total}$$
 
 ---
 
-## 4. Database Selection: SQLite 3
-- SQLite was chosen because it requires no external server daemon, operates with zero configuration on Windows, and supports full relational integrity with cascading foreign keys (`PRAGMA foreign_keys = ON;`).
-- Table `invoices` stores top-level financial metrics and metadata.
-- Table `invoice_items` stores individual itemized rows with an `invoice_id` foreign key.
-- Indices on `vendor_name`, `invoice_date`, and `invoice_number` ensure fast filtering as database volume grows.
+## 4. Database Selection & Audit Trail Architecture
+- SQLite 3 was chosen because it requires no external server daemon, operates with zero configuration on Windows, and supports full relational integrity with cascading foreign keys (`PRAGMA foreign_keys = ON;`).
+- Non-destructive schema migration: On startup, `repository.py` checks existing table columns with `PRAGMA table_info` and issues safe `ALTER TABLE ADD COLUMN` statements for backward compatibility without data loss.
+- `invoice_audit_trail`: Whenever an invoice is edited or reconciled, a diff of changed fields is saved with the previous value, new value, username, and UTC timestamp.
+
+---
+
+## 5. Duplicate Detection Engine
+- Invoice fraud and double payments cost enterprises billions annually.
+- We implemented a two-tier multi-signal detector:
+  1. **Exact Duplicate**: Identical normalized vendor (punctuation removed, legal suffixes stripped) and normalized invoice number (symbols and leading zeroes removed).
+  2. **Suspected Duplicate**: Same normalized vendor, identical total amount, and identical issue date, catching duplicate billings with slight typo variations in invoice numbers.
+
+---
+
+## 6. Batch Processing with Independent Error Isolation
+- Enterprise accounts payable operations process dozens of invoices per batch.
+- Monolithic batch processors often crash the entire batch when encountering a single unreadable, encrypted, or corrupted file.
+- Our `BatchManager` wraps each file in an isolated `try/except` boundary. If an unreadable file fails, the error is recorded in the batch log while valid invoices continue processing to completion.
+
+---
+
+## 7. Multi-Sheet Excel Exporter & Formula Injection Defense
+- We integrated `openpyxl` to produce styled, executive-ready workbooks with headers, borders, and number formats.
+- **Security Defense**: User-controlled invoice data (e.g., vendor names or descriptions like `=cmd|' /C calc'!A0`) can execute malicious DDE commands when opened in Microsoft Excel or Google Sheets.
+- The `sanitize_formula_injection` function inspects string values and automatically prepends a single quote (`'`) to any cell beginning with `=`, `+`, `-`, `@`, `\t`, or `\r`, neutralizing code execution while preserving readability.

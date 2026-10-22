@@ -1,14 +1,17 @@
-# Automated Invoice Data Extraction & Structuring System
-### *Day 6 — 90 Days / 90 Projects Challenge*
+# INVOICE INTELLIGENCE
+### *Document Processing & Financial Operations Platform*
+#### *Day 6 — 90 Days / 90 Projects Challenge*
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![UI Framework](https://img.shields.io/badge/Frontend-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![Computer Vision](https://img.shields.io/badge/CV-OpenCV%20%7C%20Tesseract%20OCR-5C3EE8?logo=opencv&logoColor=white)](https://opencv.org/)
 [![Database](https://img.shields.io/badge/Database-SQLite3-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
-[![Testing](https://img.shields.io/badge/Tests-27%20Passed-success?logo=pytest&logoColor=white)](https://pytest.org/)
+[![Testing](https://img.shields.io/badge/Tests-44%20Passed-success?logo=pytest&logoColor=white)](https://pytest.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-An end-to-end Computer Vision and FinTech automation pipeline that ingests invoice images (PNG, JPG, TIFF) and digital PDFs, applies image enhancement filters, extracts text using Tesseract OCR, parses business entities and line items using rule-based NLP, verifies accounting equations, and persists validated records in an SQLite database with JSON and CSV exports.
+An enterprise-grade financial operations and document intelligence platform that bridges the gap between unstructured invoice documents and verified, auditable financial ledgers. Built around a comprehensive 8-stage financial lifecycle:
+
+$$\textbf{Capture} \longrightarrow \textbf{Extract} \longrightarrow \textbf{Validate} \longrightarrow \textbf{Reconcile} \longrightarrow \textbf{Review} \longrightarrow \textbf{Approve} \longrightarrow \textbf{Export} \longrightarrow \textbf{Audit}$$
 
 ---
 
@@ -31,27 +34,32 @@ This project automates invoice data ingestion, transcription, mathematical recon
 
 ---
 
-## 3. Key Features
-- **Multi-Format Document Ingestion**: Supports high-resolution scans, smartphone photographs (`.png`, `.jpg`, `.jpeg`, `.tiff`), and multi-page vector PDFs (`.pdf`).
-- **Computer Vision Preprocessing Pipeline**:
-  - *Luminance Grayscale Conversion*.
-  - *Foreground Deskewing via Minimum Area Bounding Box* ($\pm 30^\circ$ rotation correction).
-  - *Bilateral Edge-Preserving Denoising* (removes background speckles without blurring font strokes).
-  - *Bicubic DPI Rescaling* ($1.5\times$ upscaling for small receipt numbers).
-  - *Otsu & Adaptive Gaussian Binarization* (handles uneven shadows from camera photos).
-- **Tesseract OCR Integration**: Uses Page Segmentation Mode 4 (`--psm 4`) for multi-column invoice layouts, extracting text and word-level coordinates with confidence metrics.
-- **Rule-Based NLP & Entity Extraction**:
-  - *Vendor Name*: Header-section heuristics excluding document stopwords ("TAX INVOICE", "BILL TO") and prioritizing business suffixes (`LLC`, `Inc`, `Technologies`, `Partners`).
-  - *Invoice & PO Numbers*: Multi-pattern regular expressions matching alphanumeric identifiers (`INV-XXXX-XXX`, `#XXXXX`, `PO-XXXXX`).
-  - *Dates*: Fuzzy parser converting ISO, European, American, and verbal dates to standard `YYYY-MM-DD`.
-  - *Itemized Table Parser*: Right-to-left reverse token analysis separating product descriptions from quantity, unit price, and line totals.
-- **Accounting Reconciliation Engine**: Enforces mathematical balance:
-  $$\text{Subtotal} + \text{Tax} + \text{Shipping} - \text{Discount} = \text{Total Amount Due}$$
-  Automatically assigns audit ratings: `EXCELLENT` ($0 discrepancy), `GOOD`, or `NEEDS_REVIEW`.
-- **Human-in-the-Loop Review & Editing**: Interactive Streamlit form and editable data grid allowing operators to tweak extracted values before committing to the database.
-- **Relational SQLite Persistence**: Stores validated records across normalized tables (`invoices`, `invoice_items`) with cascading foreign keys.
-- **Multi-Format Export Center**: One-click downloads for full structured JSON, summary CSV, and detailed item-level CSV files.
-- **Executive Analytics Dashboard**: Real-time KPI metrics (Total Invoiced, Total Spend, Average Invoice Amount, Validation Pass Rate, Top Vendors).
+## 3. Platform Architecture & 13 Core Workspaces
+
+The platform organizes accounts payable and document intelligence workflows into 4 operational areas across 13 dedicated workspaces:
+
+### 1. WORKSPACE
+1. **Overview (Operations Desk)**: Executive AP desk featuring segregated currency volume cards, work queue telemetry, live pipeline progress stages (`Imported → Extracted → Under Review → Validated → Reconciled → Exported`), and actionable issue lists.
+2. **My Work Queue**: Task-oriented exception inbox grouping invoices by actionable issue (`MISSING_INFO`, `VALIDATION_FAILED`, `POTENTIAL_DUPLICATE`, `RECONCILIATION_REQUIRED`, `NEEDS_REVIEW`) with priority sorting and direct resolution shortcuts.
+3. **All Invoices**: Primary searchable relational ledger with multi-criteria filtering (vendor, invoice #, PO #, date ranges, validation status), multi-column sorting, line items drawer, and invoice-specific audit logs.
+4. **Vendors**: Counterparty directory grouping historical spend strictly by currency, tracking first and latest transaction dates, and providing a safe **Vendor Rename & Normalization Tool** that propagates across records with audit diffs.
+
+### 2. DOCUMENT OPERATIONS
+5. **Import Center**: High-throughput ingestion center supporting PNG, JPG, TIFF, and vector PDFs with file size validation, queue preview, and **Independent Failure Isolation** (corrupt documents do not crash the batch).
+6. **Extraction Studio**: Central split-screen document review workstation:
+   - *Left Panel*: High-resolution zoom slider (50%–250%), multi-page PDF navigation, original document, preprocessed binary view, and OCR confidence-colored bounding boxes (Green $\ge 80\%$, Amber $50\text{--}79\%$, Red $< 50\%$).
+   - *Right Panel*: Live accounting equation balance checker, metadata fields, interactive editable line-items data grid, duplicate detection warning, and atomic database persistence.
+7. **Validation & Exceptions**: Rules-based validation engine (`ValidationRuleEngine`) evaluating missing vendors, missing invoice numbers, zero totals, inverted date chronologies, math imbalances, and line-item row arithmetic.
+8. **Duplicate Review**: Dedicated candidate pair review interface displaying exact and suspected duplicate invoices side-by-side with match reasoning and decisions (`CONFIRMED_DUPLICATE` vs `LEGITIMATE_SEPARATE`).
+
+### 3. FINANCIAL OPERATIONS
+9. **Reconciliation**: Financial consistency workspace comparing $\text{Subtotal} + \text{Tax} + \text{Shipping} - \text{Discount}$ against Stated Total, comparing line items sum against subtotal, and managing reconciliation approval states.
+10. **Financial Insights**: True database-backed analytics segregating spend strictly by currency denomination (no combining USD with EUR), monthly timeline trends, and vendor concentration bar charts.
+11. **Reports & Exports**: Multi-format export hub generating structured JSON, summary CSV, itemized line-items CSV, and multi-sheet Excel workbooks (`.xlsx`) via `openpyxl` with built-in **Formula Injection Defense** (`'`).
+
+### 4. SYSTEM
+12. **Activity & Audit**: System-wide governance log capturing field diffs, previous values, new values, operator identities, timestamps, and batch job execution logs.
+13. **Settings**: OCR engine diagnostics, Tesseract binary verification, SQLite PRAGMA integrity check, and one-click synthetic sample data re-seeding.
 
 ---
 
@@ -95,16 +103,16 @@ flowchart TD
 ## 5. Technology Stack
 | Layer | Technologies & Libraries | Purpose |
 | :--- | :--- | :--- |
-| **Frontend UI** | Streamlit, HTML/CSS | Modern web presentation, multi-tab workflow, interactive data grid |
+| **Frontend UI** | Streamlit, HTML/CSS | Editorial Finance Studio presentation, persistent Light/Dark themes, split-screen workstation, interactive data grid |
 | **Computer Vision** | OpenCV (`opencv-python`), Pillow | Image preprocessing (deskew, bilateral denoise, Otsu binarization) |
 | **OCR Engine** | Tesseract OCR 5.4, `pytesseract` | Optical character recognition, bounding box extraction, confidence scores |
 | **Document Processing**| `pdfplumber`, `pypdf`, `pypdfium2` | PDF parsing, embedded text extraction, high-DPI rasterization |
 | **Entity Extraction** | Python `re`, `python-dateutil` | Regular expressions, date normalization, reverse tokenization |
-| **Data Validation** | Pydantic v2 | Schema enforcement, typed contracts, validation scoring |
-| **Database** | SQLite 3 | Embedded relational storage with cascading foreign keys |
-| **Data & Exports** | Pandas, JSON | Tabular aggregations, summary CSV, detailed CSV, JSON exports |
+| **Data Validation** | Pydantic v2, Custom Detector | Schema enforcement, typed contracts, validation scoring, duplicate detection |
+| **Database** | SQLite 3 | Embedded relational storage with cascading foreign keys, audit trails & batch jobs |
+| **Data & Exports** | Pandas, `openpyxl`, JSON | Tabular aggregations, summary CSV, detailed CSV, multi-sheet Excel (.xlsx), JSON |
 | **Sample Generation** | ReportLab | Programmatic generation of realistic synthetic invoice PDFs & PNGs |
-| **Testing** | `pytest`, `pytest-cov` | Automated unit, integration, and end-to-end regression tests |
+| **Testing** | `pytest`, `pytest-cov` | 36 automated unit, integration, and end-to-end regression tests |
 
 ---
 
@@ -118,11 +126,11 @@ flowchart TD
 ├── QUICKSTART.md                    # Rapid setup instructions
 ├── DEMO_SCRIPT.md                   # 60-120 second interview presentation script
 ├── pyproject.toml                   # Project metadata & pytest configuration
-├── requirements.txt                 # Pinned dependencies
+├── requirements.txt                 # Pinned dependencies (including openpyxl)
 ├── setup.bat                        # Windows 1-click automated setup
 ├── run.bat                          # Windows 1-click application launcher
 ├── test.bat                         # Windows automated test runner
-├── app.py                           # Main Streamlit web application
+├── app.py                           # Main Streamlit web application (Editorial Finance Studio)
 ├── config.py                        # Configuration loader & Tesseract path resolver
 ├── src/
 │   ├── __init__.py
@@ -140,15 +148,21 @@ flowchart TD
 │   ├── validator/
 │   │   ├── __init__.py
 │   │   ├── math_validator.py        # Accounting balance reconciliation check
-│   │   └── schema_validator.py      # Pydantic schemas & audit grading
+│   │   ├── schema_validator.py      # Pydantic schemas & audit grading
+│   │   ├── duplicate_detector.py    # Multi-signal exact & suspected duplicate detector
+│   │   └── rule_engine.py           # Rules-based exception findings engine
 │   ├── database/
 │   │   ├── __init__.py
-│   │   ├── models.py                # SQLite schema DDL (invoices, invoice_items)
-│   │   └── repository.py            # CRUD repository & analytics aggregations
+│   │   ├── models.py                # SQLite schema (invoices, items, audit_trail, batches)
+│   │   └── repository.py            # CRUD repository, work queue, vendors & analytics
+│   ├── batch/
+│   │   ├── __init__.py
+│   │   └── batch_manager.py         # Multi-file queue orchestrator with failure isolation
 │   └── exporter/
 │       ├── __init__.py
 │       ├── json_exporter.py         # Formatted JSON serializer
-│       └── csv_exporter.py          # Summary & detailed CSV exporter
+│       ├── csv_exporter.py          # Summary & detailed CSV exporter
+│       └── excel_exporter.py        # Multi-sheet Excel workbook generator (openpyxl)
 ├── data/
 │   ├── README.md                    # Dataset origin & schema documentation
 │   ├── invoices.db                  # Local SQLite database (seeded with samples)
@@ -164,15 +178,20 @@ flowchart TD
 │   ├── test_extractor.py            # Tests for regex patterns & field parsing
 │   ├── test_table_parser.py         # Tests for line item table parsing
 │   ├── test_math_validator.py       # Tests for financial reconciliation checks
+│   ├── test_duplicate_detector.py   # Tests for duplicate invoice detection
+│   ├── test_rule_engine.py          # Tests for rules-based exception engine
+│   ├── test_work_queue.py           # Tests for work queue, vendors & duplicate decisions
+│   ├── test_batch_manager.py        # Tests for batch processing & error isolation
 │   ├── test_database.py             # Tests for SQLite schema, CRUD & analytics
 │   ├── test_exporter.py             # Tests for JSON & CSV exporters
+│   ├── test_excel_exporter.py       # Tests for multi-sheet Excel & formula injection protection
 │   └── test_e2e_pipeline.py         # End-to-end integration test
 ├── docs/
 │   ├── PROJECT_OVERVIEW.md          # Business problem, solution & scope
 │   ├── ARCHITECTURE.md              # Technical design, Mermaid flowcharts & ERD
-│   ├── USER_GUIDE.md                # Walkthrough of all UI screens & features
+│   ├── USER_GUIDE.md                # Walkthrough of all 13 studio workspaces
 │   ├── DEVELOPMENT_NOTES.md         # Design decisions, trade-offs & rationale
-│   ├── TESTING.md                   # Complete test execution logs & cases
+│   ├── TESTING.md                   # Complete test execution logs & cases (44 tests)
 │   └── TROUBLESHOOTING.md           # Common issues & step-by-step fixes
 └── screenshots/                     # UI visual captures
 ```
@@ -181,13 +200,12 @@ flowchart TD
 
 ## 7. Screenshots & Interface Preview
 
-| Screen | Description | Path |
+| Workspace | Description | Path |
 | :--- | :--- | :--- |
-| **Document Processing & Bounding Boxes** | Side-by-side original invoice preview with color-coded OCR confidence bounding boxes (Green/Orange/Red) | `screenshots/dashboard.png` |
-| **Extracted Data & Math Verification** | Extracted vendor, invoice number, dates, line items, and the accounting balance equation | `screenshots/extracted_data.png` |
-| **Database & Analytics Dashboard** | SQLite records table, spend by vendor metrics, and export center | `screenshots/database_analytics.png` |
-
-> *To capture live screenshots: Launch `run.bat`, open `http://localhost:8501`, and save captures into `screenshots/`.*
+| **Overview Desk** | Operational summary, segregated currency totals, work queue alerts, and live pipeline stage progress | `screenshots/overview_desk.png` |
+| **Extraction Studio** | Dual-pane workstation with zoom slider, OCR bounding boxes, and editable line-item data grid | `screenshots/extraction_studio.png` |
+| **Validation & Exceptions** | Rules-based audit station isolating critical discrepancies, inverted dates, and arithmetic issues | `screenshots/validation_center.png` |
+| **Duplicate Review** | Candidate pair review comparing exact and suspected duplicate billings side-by-side | `screenshots/duplicate_review.png` |
 
 ---
 
@@ -245,7 +263,7 @@ python scripts\seed_database.py
 
 ## 10. Quick Start Commands
 ```cmd
-# Start the Streamlit application
+# Start the Invoice Intelligence platform
 run.bat
 
 # Or run via terminal
@@ -259,7 +277,7 @@ Open **`http://localhost:8501`** in your web browser.
 The project reads configurations from `.env` using `python-dotenv`:
 ```env
 # Application Settings
-APP_NAME="Automated Invoice Data Extraction & Structuring System"
+APP_NAME="INVOICE INTELLIGENCE"
 APP_ENV=development
 DEBUG=True
 
@@ -360,9 +378,9 @@ Run the automated test suite on Windows:
 test.bat
 ```
 **Actual Test Results:**
-- **Status: 27 / 27 Tests PASSED (100% Pass Rate)**
-- **Execution Time**: ~2.87 seconds
-- Modules Verified: Preprocessor, OCR Engine, Regex Patterns, NLP Helpers, Table Parser, Math Reconciliation, SQLite Repository, Exporters, and End-to-End Integration.
+- **Status: 44 / 44 Tests PASSED (100% Pass Rate)**
+- **Execution Time**: ~5.63 seconds
+- Modules Verified: Preprocessor, OCR Engine, Regex Patterns, NLP Helpers, Table Parser, Math Reconciliation, Schema Validator, Rules-Based Validation Engine, Duplicate Detector & Pair Review, Work Queue & Vendor Directory, Batch Processing Manager, SQLite Repository & Audit Trail, CSV/JSON Exporters, Multi-sheet Excel Exporter with Formula Injection Sanitization, and End-to-End Integration.
 
 ---
 

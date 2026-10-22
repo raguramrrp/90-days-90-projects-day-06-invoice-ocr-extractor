@@ -18,6 +18,11 @@ class FieldExtractor:
     """Extracts business entities and financial parameters from OCR text blocks."""
 
     @classmethod
+    def extract_fields(cls, raw_text: str) -> Dict[str, Any]:
+        """Convenience alias for extract_all."""
+        return cls.extract_all(raw_text)
+
+    @classmethod
     def extract_all(cls, raw_text: str) -> Dict[str, Any]:
         """Parse raw text and return structured invoice dictionary."""
         lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
